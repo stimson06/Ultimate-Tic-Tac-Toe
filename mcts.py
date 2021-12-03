@@ -30,7 +30,7 @@ class MCTS():
         """ Intializing the hyperparameter variables """
         
         self.exploration_constant = 0.5 
-        self.simulations =10 # depth
+        self.simulations =15 # depth
     
     def search(self, inital_state):
         """ Searches for the best move in the current position
