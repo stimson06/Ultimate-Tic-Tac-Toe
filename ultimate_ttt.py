@@ -130,7 +130,7 @@ class Board:
         
         return actions 
     
-    def assign_winner(self, won_boards):
+    def lock_board(self, won_boards):
         """ This function locks all the empty spaces with '*'
             if player/bot won the sub-board
 
@@ -251,7 +251,7 @@ class Board:
         
         # Lock all other positions if a board is won            
         if len(list(set(won_boards))) >=1:
-            self.assign_winner(list(set(won_boards)))
+            self.lock_board(list(set(won_boards)))
         
         # Check for winning in the global board           
         if len(list(set(won_boards))) >=3:       
@@ -372,7 +372,7 @@ class Board:
         return board_string
     
 if __name__ == '__main__':
-    
+
     #Intialize the board
     board = Board()
            
