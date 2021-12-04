@@ -23,4 +23,4 @@ The rules of this game can be viewed [here](http://mathwithbaddrawings.com/2013/
   - [Introduction and details](http://jeffbradberry.com/posts/2015/09/intro-to-monte-carlo-tree-search/)
   - [Youtube](https://www.youtube.com/watch?v=hmQogtp6-fs)
   - [Infographic](https://medium.com/applied-data-science/alphago-zero-explained-in-one-diagram-365f5abf67e0)
-  - [Visualization](https://medium.com/applied-data-science/alphago-zero-explained-in-one-diagram-365f5abf67e0)
+  - [Visualization](https://vgarciasc.github.io/mcts-viz/)

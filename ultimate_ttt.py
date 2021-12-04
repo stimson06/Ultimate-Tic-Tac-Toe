@@ -9,6 +9,7 @@ class Board:
     def __init__ (self, board =None ):
             self.player_1 = 'x'
             self.player_2 = 'o'
+            self.sub_board = None
             self.empty_square = '.'
             self.position = {}
             self.board_sq=[]
@@ -153,50 +154,30 @@ class Board:
             bot_move ([type]): Position of the board when bot(AI) moved. """
         
         # moves after bot(AI) played
-        played_mov = dict(bot_move ^ player_move)
+        played_mov = dict(bot_move - player_move)
         
-        # Case 1 - winning move
-        # Return appropriate board to that of previous move by bot(AI)
-        if len(played_mov)>1:
-            
-            # Find the board position played by bot (different move from other moves)
-            bd = None
-            for key,value in played_mov.items():
+        # find playable board
+        board_found = False
+        for key, value in played_mov.items():
+            if value == 'o' or value == 'x':
                 mov = list(key)
-                if bd is None:
-                    bd = mov[0]
-                if bd is not None and bd != mov[0]:
-                    bd =mov[0]
-                    nxt = ((mov[1])+1, (mov[2])+1) # mov[1]-row, mov[2]-col
-                    
-                    # Returns the appropriate board to that of previous move played
-                    for key, value in self.next_play.items():
-                        chk = 0 # checkpoint for the first change
-                        if nxt == key:
-                            for row in range(3):
-                                for col in range(3):
-                                    if self.position[value-1, row, col] == self.empty_square and chk<0:
-                                        chk += 1
-                                        print('Player has to move in board {}'.format(value))
-                                    break
-                                break
-                            break
-                        
-        # Case 2 - Normal move      
-        else:
-            mov = list(played_mov.keys())
-            nxt = ((mov[0][1])+1, (mov[0][2])+1)
+                nxt = ((mov[1])+1, (mov[2])+1)
+                
+                # find the board with the dictionary
+                for key, value in self.next_play.items():
+                    if nxt == key:
+                        for row in range(3):
+                            for col in range(3):
+                                if self.position[value-1, row, col] == self.empty_square:
+                                    board_found = True
+                                    self.sub_board = value
+                                    
+        # If board is full / not found
+        if board_found == False: 
+            print('Chose board of your choice')
+            self.sub_board = None
             
-            # Returns the appropriate board to that of previous move played
-            for key, value in self.next_play.items():
-                if nxt == key:
-                    for row in range(3):
-                        for col in range(3):
-                            if self.position[value-1, row, col] == self.empty_square:
-                                print('Player has to move in board {}'.format(value))
-                            break
-                        break
-                    break
+        return      
                         
     def is_win(self):
         """checks if the game is won by player/bot. """
@@ -286,7 +267,7 @@ class Board:
         """Loops the game untill win/draw state is reached. """
         
         print("Type 'exit' to quit the game")
-        print('Move (sub board, row, col) :')
+        
         print(self)
         
         # Intialize Monte Carlo
@@ -295,8 +276,11 @@ class Board:
         while True:
             
             # Take the input from the player
-            user = input('> ' )
-        
+            if self.sub_board == None:
+                user = input('board, row, col > ' )
+            else: 
+                print('playable board: ',self.sub_board)
+                user = input('row, col > ')
             if user == 'exit':
                 break
             if user == '':
@@ -304,14 +288,19 @@ class Board:
 
             try:
                 # Make move desired by user
-                sub_board, row, col = (map(int, user.split(',')))
-                self.prev_mov = [sub_board, row, col]
-                if self.position[sub_board-1, row-1, col-1] == self.empty_square:
-                    self = self.make_move(sub_board, row, col)
+                if self.sub_board == None:
+                    self.sub_board, row, col = (map(int, user.split(',')))
+                else:
+                    #print('Enter only row, col')
+                    row, col = map(int, user.split(','))
+                    
+                self.prev_mov = [self.sub_board, row, col]
+                if self.position[self.sub_board-1, row-1, col-1] == self.empty_square:
+                    self = self.make_move(self.sub_board, row, col)
                     player_move = self.position
                     
                     # Bot(AI) turn 
-                    print("AI Thinking...")
+                    print("\nAI Thinking...\n")
                     player_move= set(player_move.items())
                     best_move = mcts.search(self)
                     
@@ -319,6 +308,7 @@ class Board:
                         self = best_move.board
                         bot_move = self.position
                         bot_move = set(bot_move.items())
+                        
                         
                     except :
                         pass
@@ -377,5 +367,4 @@ if __name__ == '__main__':
     board = Board()
            
     # Start playing the game           
-    board.game_loop()
-    
+    board.game_loop() 
