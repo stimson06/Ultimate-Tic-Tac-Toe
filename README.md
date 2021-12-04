@@ -4,7 +4,7 @@ This repo also has a simple tic-tac-toe that can be played .
 
 The rules of this game can be viewed [here](http://mathwithbaddrawings.com/2013/06/16/ultimate-tic-tac-toe/)
 
-## Board
+## Board Representation
 ![alt text](https://github.com/stimson06/Ultimate-Tic-Tac-Toe/blob/master/Board_details.png)
 
 ## Play on your computer
