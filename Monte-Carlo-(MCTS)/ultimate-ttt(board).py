@@ -263,6 +263,15 @@ class Board:
         else:
             return True                      
 
+    def get_state(self):
+        board = Board(self)
+        print(board)
+        states =[]
+        for state in board.board_sq:
+            current_state = board.position[state[0], state[1], state[2]] 
+            states.append(current_state)
+        return str(states)
+    
     def game_loop(self):
         """Loops the game untill win/draw state is reached. """
         
@@ -276,6 +285,7 @@ class Board:
         while True:
             
             # Take the input from the player
+            #print(self.get_state())
             if self.sub_board == None:
                 user = input('board, row, col > ' )
             else: 
@@ -337,7 +347,7 @@ class Board:
     def __str__ (self ):
         """Magic function to print the board"""
         
-        board_string = '-------------------------\n|'
+        board_string = '|-----------------------|\n|'
 
         count = 0
         for intial in range(len(self.board_sq)):
@@ -347,24 +357,24 @@ class Board:
             if count > 0 and count %9 == 0:
                 board_string += '\n|'
             if count > 0 and count % 27 == 0:
-                board_string += '------------------------\n|'
+                board_string += '-----------------------|\n|'
                 
             board_string += ' %s' % self.position[self.board_sq[intial][0], self.board_sq[intial][1], self.board_sq[intial][2]]
             count+=1
         
-        board_string += ' |\n-------------------------\n'
+        board_string += ' |\n|-----------------------|\n'
             
         if self.player_1 == 'x':
-            board_string = '\n ------------------------\n      "x" to move: \n ------------------------\n' + board_string
+            board_string = '\n ------------------------\n      "x" to move: \n ------------------------\n\n' + board_string
         elif self.player_1 == 'o':
-            board_string = '\n ------------------------\n      "o" to move: \n ------------------------\n' + board_string
+            board_string = '\n ------------------------\n      "o" to move: \n ------------------------\n\n' + board_string
     
         return board_string
     
 if __name__ == '__main__':
 
-    #Intialize the board
+    # Intialize the board
     board = Board()
            
     # Start playing the game           
-    board.game_loop() 
+    board.game_loop()
