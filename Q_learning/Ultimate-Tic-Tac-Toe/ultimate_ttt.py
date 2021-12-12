@@ -1,8 +1,14 @@
 from itertools import combinations
 
 class Board:
+    " Functions requried to build the Ultimate Tic-Tac-Toe board."
     
     def __init__(self, render = True):
+        """ Intializing the variables.
+
+        Args:
+            render : Printing the board. Defaults to True. """
+            
         self.board = [[[0,0,0],[0,0,0],[0,0,0]] for _ in range(9)]
         self.player = 1 
         self.repr = {0:'.', 1:'x', -1:'o', 0.01:'*'}
@@ -56,9 +62,14 @@ class Board:
             self.board_sq+=seq_3
             
     def _print(self):
+        """ Function to print the board. """
+        
+        # Track the line 
         count = 0
         print('|--------------------|')
         print('|',  sep=' ', end='', flush=True)
+        
+        # Print the board
         for space in self.board_sq:
             count += 1
             print(self.repr[self.board[space[0]][space[1]][space[2]]], sep=' ', end=' ', flush=True)
@@ -66,10 +77,11 @@ class Board:
                 print('|\n',  sep=' ', end='', flush=True)
             if count>0 and count%3 == 0:
                 print('|',  sep=' ', end='', flush=True)
-            if count%27 == 0:
+            if count%27 == 0 and count <81:
                 print('--------------------|',  sep=' ', end='', flush=True)
                 print('\n|',  sep=' ', end='', flush=True)
-     
+        print('--------------------|')
+        
     def lock_board(self, won_boards):
         """ This function locks all the empty spaces with '*'
             if player/bot won the sub-board
@@ -81,10 +93,16 @@ class Board:
         for sub_board in won_boards:
             for row in range(3):
                 for col in range(3):
+                    
+                    # Lock empty spaces with '*'
                     if self.board[sub_board-1][row][col] == 0:
                         self.board[sub_board-1][row][col] = 0.01 
     
     def get_winner(self):
+        """ Checks the win state of the board.
+
+        Returns:
+            Player / None based on the board state. """
         
                        #-- Horizontal wins --#    #---Vertical Wins ----#   # Diagonal Win #
         wining_pos = [(1,2,3), (4,5,6), (7,8,9), (1,4,7), (2,5,8), (3,6,9), (1,5,9), (3,5,7)]
@@ -92,47 +110,51 @@ class Board:
         player = []
         
         for sub_board in range(0,9):
+            
             # Horizontal win
             for i in range(3):
+                
+                # Player 'x' won
                 if (sum(self.board[sub_board][i])) == 3:
-                    #print('H win')
                     won_boards[0].append(sub_board+1)
+                
+                # Player 'o' won
                 if (sum(self.board[sub_board][i])) == -3:
-                    #print('H win')
                     won_boards[1].append(sub_board+1)
                    
                     
             
             # Vertical win   
             for i in range(3):
+                
+                # Player 'x' won
                 if (sum(self.board[sub_board][j][i] for j in range(3))) == 3:
-                    #print('V win')
                     won_boards[0].append(sub_board+1)
-                    
+                
+                # Player 'o' won
                 if (sum(self.board[sub_board][j][i] for j in range(3))) == -3:
-                    #print('V win')
                     won_boards[1].append(sub_board+1)
                     
                     
-            # Diagonal win(L-R)
+            # Diagonal win
             for i in range(3):
                 
-                    
                     # Diagonal win(L-R)
+                    # Player 'x' won
                     if (sum(self.board[sub_board][i][i] for i in range(3))) ==3:
-                        #print(' D L-R win')
                         won_boards[0].append(sub_board+1)    
-                        
+                    
+                    # Player 'o' won
                     if (sum(self.board[sub_board][i][i] for i in range(3))) ==-3:
-                        #print(' D L-R win')
                         won_boards[1].append(sub_board+1)                    
                     
                     # Diagonal win(R-L)
+                    # Player 'x' won
                     if (sum(self.board[sub_board][i][2-i] for i in range(3))) == 3:
-                        #print(' D R-L win')
                         won_boards[0].append(sub_board+1)
+                    
+                    # Player 'o' won
                     if (sum(self.board[sub_board][i][2-i] for i in range(3))) == -3:
-                        #print(' D R-L win')
                         won_boards[1].append(sub_board+1)
             
         # Lock all other positions if a board is won
@@ -174,20 +196,25 @@ class Board:
             return True
     
     def get_state(self):
+        """ Returns the board in the string representation. """
+        
         return str(self.board)
      
     def previous_move(self):
         return self.prev_move
        
     def get_valid_actions(self):
+        """ Creates a list of available actions for the current state.
+
+        Returns:
+            actions: Set of available actions in the board. """
         
+        # Retrive the last move played
         prev_mov = self.previous_move()
         remaining_board = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-        #print(prev_mov)
+        
         # Find the sub-board to play
-        #print(prev_mov)
         prev_mov = (prev_mov[1], prev_mov[2])
-        #print(prev_mov)
         for key, value in self.next_play.items():
             if key == prev_mov:
                 sub_board = value
@@ -209,30 +236,40 @@ class Board:
                         if self.board[board-1][row][col] == 0:
                             actions.append((board, row+1, col+1))
         
-        #print(actions)
         return actions
 
     def play(self, board, row, col):
+        """ Function to play the game.
+
+        Args:
+            board : Sub-board in the board.
+            row : Position of row in the board.
+            col : Position of row in the board.  """
         
+        # Print the players
         if self.render:
             if self.player == 1:
                 print("\n ------------------------\n      'o' to move: \n ------------------------\n")
             if self.player ==-1:
                 print("\n ------------------------\n      'x' to move: \n ------------------------\n")
         
+        # Return if the position if already taken
         if self.board[board-1][row-1][col-1] !=0:
             return None
         
+        # Make a move in the board
         self.board[board-1][row-1][col-1] = self.player
         
+        # Print the board
         if self.render:
             self._print()
         
+        # Check for the win state
         winner = self.get_winner()
-        
         if winner:
             return winner
         
+        # Switch players
         self.player *=-1
         
         return None    
